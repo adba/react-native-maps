@@ -609,4 +609,35 @@ static int kDragCenterContext;
     }
 }
 
+RCT_EXPORT_METHOD(convertToCoordinates:(nonnull NSNumber *)reactTag
+                  coordinates:(NSArray *) coordinates
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject
+)
+{
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        id view = viewRegistry[reactTag];
+        @try {
+            if (![view isKindOfClass:[AIRMap class]]) {
+                RCTLogError(@"Invalid view returned from registry, expecting AIRMap, got: %@", view);
+            } else {
+                AIRMap *mapView = (AIRMap *)view;
+                NSMutableArray *outarr = [NSMutableArray arrayWithCapacity:coordinates.count];
+                
+                for (NSArray *coord in coordinates) {
+                    CGPoint p = CGPointMake([coord[0] floatValue], [coord[1] floatValue]);
+                    CLLocationCoordinate2D c = [mapView convertPoint:p toCoordinateFromView:mapView];
+                    [outarr addObject: @[ @(c.latitude), @(c.longitude) ] ];
+                }
+                
+                resolve(outarr);
+            }
+        } @catch (NSException *exception) {
+            RCTLogError(@"ERROR CONVERTION COORDINATES %@", exception)
+            reject(@"error", @"error converting coordinates", nil);
+        }
+    }];
+}
+
+
 @end
