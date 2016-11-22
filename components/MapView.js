@@ -502,6 +502,10 @@ class MapView extends React.Component {
     }
   }
 
+  convertToCoordinates(points) {
+    return this._mapManagerCommand('convertToCoordinates')(this._getHandle(), points)
+  }
+
   render() {
     let props;
 
