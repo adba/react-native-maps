@@ -775,7 +775,7 @@ RCT_EXPORT_METHOD(convertToCoordinates:(nonnull NSNumber *)reactTag
                 resolve(outarr);
             }
         } @catch (NSException *exception) {
-            RCTLogError(@"ERROR CONVERTION COORDINATES %@", exception)
+            RCTLogError(@"ERROR CONVERTION COORDINATES %@", exception);
             reject(@"error", @"error converting coordinates", nil);
         }
     }];
